@@ -37,6 +37,14 @@ class PythonTutor:
 			"git": {"explanation": "Git tracks changes to files over time."},
 		}
 
+	def explain_concept(self, normalized_message):
+		for topic, info in self.topics.items():
+			if topic in normalized_message:
+				return info["explanation"]
+
+		available_topics = ", ".join(self.topics)
+		return f"That topic is not available yet. I can explain: {available_topics}."
+
 	def respond(self, message):
 		self.history.append(("student", message))
 		normalized_message = message.strip().lower()
@@ -46,6 +54,8 @@ class PythonTutor:
 			response = "Hello! What would you like to learn about Python?"
 		elif any(command in message_words for command in ("bye", "exit")):
 			response = "Goodbye! Happy learning."
+		elif "explain" in normalized_message:
+			response = self.explain_concept(normalized_message)
 		else:
 			response = "I don't know how to answer that yet."
 
