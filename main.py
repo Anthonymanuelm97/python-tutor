@@ -28,13 +28,44 @@
 class PythonTutor:
 	def __init__(self):
 		self.history = []
+		self.mastered_topics = {}
 		self.topics = {
-			"variable": {"explanation": "A variable stores a value."},
-			"list": {"explanation": "A list stores an ordered collection of values."},
-			"dictionary": {"explanation": "A dictionary stores values using keys."},
-			"function": {"explanation": "A function is reusable code that performs a task."},
-			"class": {"explanation": "A class is a blueprint for creating objects."},
-			"git": {"explanation": "Git tracks changes to files over time."},
+			"variable": {
+				"explanation": "A variable stores a value.",
+				"question": "What symbol is used to assign a value to a variable?",
+				"answer": "=",
+				"answer_type": "text",
+			},
+			"list": {
+				"explanation": "A list stores an ordered collection of values.",
+				"question": "What is the index of the first item in a Python list?",
+				"answer": "0",
+				"answer_type": "number",
+			},
+			"dictionary": {
+				"explanation": "A dictionary stores values using keys.",
+				"question": "What do dictionaries use to look up values?",
+				"answer": "keys",
+				"answer_type": "text",
+			},
+			"function": {
+				"explanation": "A function is reusable code that performs a task.",
+				"question": "What is a reusable block of code called?",
+				"answer": "function",
+				"answer_type": "text",
+			},
+			"class": {
+				"explanation": "A class is a blueprint for creating objects.",
+				"question": "What is a class a blueprint for creating?",
+				"answer": "objects",
+				"answer_type": "text",
+			},
+			"git": {
+				"explanation": "Git tracks changes to files over time.",
+				"question": "What does Git track over time?",
+				"answer": "changes to files",
+				"answer_type": "text",
+			},
 		}
 
 	def explain_concept(self, normalized_message):
@@ -44,6 +75,25 @@ class PythonTutor:
 
 		available_topics = ", ".join(self.topics)
 		return f"That topic is not available yet. I can explain: {available_topics}."
+
+	def ask_question(self, normalized_message):
+		for topic, info in self.topics.items():
+			if topic in normalized_message:
+				student_answer = input(info["question"] + " ")
+
+				if info["answer_type"] == "text":
+					student_answer = " ".join(student_answer.lower().split())
+					correct_answer = " ".join(info["answer"].lower().split())
+				else:
+					student_answer = int(student_answer)
+					correct_answer = int(info["answer"])
+
+				is_correct = student_answer == correct_answer
+				self.mastered_topics[topic] = is_correct
+				return "Correct!" if is_correct else f"Incorrect. The correct answer was: {info['answer']}."
+
+		available_topics = ", ".join(self.topics)
+		return f"That topic is not available yet. I can quiz you on: {available_topics}."
 
 	def respond(self, message):
 		self.history.append(("student", message))
@@ -56,6 +106,8 @@ class PythonTutor:
 			response = "Goodbye! Happy learning."
 		elif "explain" in normalized_message:
 			response = self.explain_concept(normalized_message)
+		elif "question" in message_words or "quiz" in message_words:
+			response = self.ask_question(normalized_message)
 		else:
 			response = "I don't know how to answer that yet."
 
