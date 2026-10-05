@@ -103,6 +103,11 @@ class PythonTutor:
 		attempted_topics = len(self.mastered_topics)
 		return f"You answered {correct_topics} out of {attempted_topics} attempted topics correctly."
 
+	def show_history(self):
+		for speaker, text in self.history:
+			print(f"{speaker}: {text}")
+
+	
 	def respond(self, message):
 		self.history.append(("student", message))
 		normalized_message = message.strip().lower()
@@ -123,3 +128,27 @@ class PythonTutor:
 
 		self.history.append(("tutor", response))
 		return response
+
+
+def start_conversation(tutor):
+    print("Welcome to the Python Tutor! Type 'exit' to end the conversation.\n")
+
+    while True:
+        message = input("You: ")
+        response = tutor.respond(message)
+        print(f"Python Tutor: {response}\n")
+
+        if "exit" in message.lower() or "bye" in message.lower():
+            break
+
+    print("--- Conversation History ---")
+    tutor.show_history()
+
+
+def main():
+    tutor = PythonTutor()
+    start_conversation(tutor)
+
+
+if __name__ == "__main__":
+    main()
