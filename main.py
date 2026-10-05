@@ -85,7 +85,10 @@ class PythonTutor:
 					student_answer = " ".join(student_answer.lower().split())
 					correct_answer = " ".join(info["answer"].lower().split())
 				else:
-					student_answer = int(student_answer)
+					try:
+						student_answer = int(student_answer)
+					except ValueError:
+						return "Please enter a number."
 					correct_answer = int(info["answer"])
 
 				is_correct = student_answer == correct_answer
