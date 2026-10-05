@@ -95,6 +95,14 @@ class PythonTutor:
 		available_topics = ", ".join(self.topics)
 		return f"That topic is not available yet. I can quiz you on: {available_topics}."
 
+	def show_progress(self):
+		if not self.mastered_topics:
+			return "You haven't attempted any topics yet."
+
+		correct_topics = sum(self.mastered_topics.values())
+		attempted_topics = len(self.mastered_topics)
+		return f"You answered {correct_topics} out of {attempted_topics} attempted topics correctly."
+
 	def respond(self, message):
 		self.history.append(("student", message))
 		normalized_message = message.strip().lower()
@@ -108,6 +116,8 @@ class PythonTutor:
 			response = self.explain_concept(normalized_message)
 		elif "question" in message_words or "quiz" in message_words:
 			response = self.ask_question(normalized_message)
+		elif "progress" in message_words:
+			response = self.show_progress()
 		else:
 			response = "I don't know how to answer that yet."
 
